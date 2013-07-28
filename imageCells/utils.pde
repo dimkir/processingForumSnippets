@@ -33,22 +33,41 @@ void drawVertices(PShape shp){
 
 
 
+PVector[] getPointsFromShape(PShape shp){
+   //get points with probability 100%
+   return getPointsFromShape(shp, 1.0f);
+}
+
+
 /**
 * Creates array of points from the shape. 
 * What happens if there's 0 shapes?
 * The simpliest solution is to throw an exception.
 */
-PVector[] getPointsFromShape(PShape shp){
+PVector[] getPointsFromShape(PShape shp, float probability){
    int vertexCount = shp.getVertexCount();
    if ( vertexCount == 0 ){
       throw new RuntimeException(
       "Shape (or the current node of the shape) doesn't have any vertices. " + 
       "Maybe children nodes have. Shape has: " + shp.getChildCount() + " children");
    }
-   PVector[] points = new PVector[vertexCount];
+//   PVector[] points = new PVector[vertexCount];
+
+   ArrayList<PVector> points = new ArrayList<PVector>();
+   
    for(int i = 0; i < vertexCount ; i++){
-      points[i] = shp.getVertex(i);
+      float r=  random(1.0f);
+      if ( r < probability ){
+        points.add(shp.getVertex(i));
+      }
    }  
   
-   return points; 
+   PVector[] pointAR = new PVector[points.size()];
+   pointAR = points.toArray(pointAR);
+  
+   return pointAR; 
 }
+
+
+
+
