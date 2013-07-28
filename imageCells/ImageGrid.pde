@@ -87,7 +87,7 @@ class ImageGrid
       int cellX = col * mCellWidth;
       int cellY = row * mCellHeight;
       PImage img = mImage.get(cellX, cellY, mCellWidth, mCellHeight);
-      return new ImageCell(img, cellX, cellY, mCellWidth, mCellHeight);
+      return new ImageCell(img, cellX, cellY, mCellWidth, mCellHeight, row, col);
    }
    
    
@@ -115,6 +115,10 @@ class ImageGrid
            throw new RuntimeException("Cannot load image: " + imagePath );
         }
         return img;
+   }
+
+   ImageCell getCellAtPoint(float x, float y){
+      return getCellAtPoint((int) x, (int) y);
    }
 
 
@@ -167,6 +171,46 @@ class ImageGrid
       println(level + ":" + msg);
    }
    
+   
+   
+   /**
+   * Returns collection of unique cells which fall into points. 
+   * Points are supplied via non-empty array of points.
+   * Points can have many points pointing at the same cell, that's no problem.
+   * Cell will be returned only once.
+   * @throws RuntimeException, in case there's NULL or empty array of points supplied.
+   */
+   private TrueFalseGrid trueFalseGrid = new TrueFalseGrid();
+   CellCollection getCellsFromPoints(PVector[] points){
+       if ( points == null || points.length == 0 ){
+          throw new RuntimeException("ImageGrid::getCellsFromPoints():: cannot supply NULL or empty array of points");
+       }
+       CellCollection cellCollection = new CellCollection();
+       
+       // this is kinda brute-force method, but we don't care.
+       // this method shouldn't be called very often or should be called on optimied sets of points.
+       
+       trueFalseGrid.setAll(false);
+       // to know whether we know or not
+       for(int i = 0; i < points.length ; i++){
+          PVector p = points[i];
+          ImageCell cell = getCellAtPoint(p.x, p.y);
+          if ( cell == null ){
+             // TODO: I do not have complete understanding of why this cell is null? Probably this is the "edge cell"
+             continue; 
+          }
+          // we check if we already saved this specific cell
+          // the tfGrid will have true of already saved.
+          if ( !trueFalseGrid.isCellTrue(cell.getRow(), cell.getCol()) ) {
+             trueFalseGrid.setCell(true, cell.getRow(), cell.getCol());
+             cellCollection.addCell(cell);
+          }          
+          else{
+             // this cell (corresponding to this point) has already been saved to collection before
+          }
+       }  
+       return cellCollection;
+   }
    
    
 }// class ImageGrid
