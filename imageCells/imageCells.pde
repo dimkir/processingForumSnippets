@@ -15,9 +15,10 @@ Modes modes = new Modes(RANDOM_PIXEL, PIXEL_UNDER_MOUSE, CAT_SHAPE);
 
 
 void setup(){
+   size(800,600);
    // load image, so that we know it's size, to set sketch dimensions
    myImage = loadImage(C_IMAGE_NAME); 
-   size(myImage.width, myImage.height);
+   //size(myImage.width, myImage.height);
    
    // here we create a "grid" object out of the image.
    // now we can "query" each cell of the image via
@@ -35,7 +36,7 @@ void setup(){
 
    // here we actually ask ImageGrid to return cells, into which 
    // the points are falling
-   PVector[] catPoints = getPointsFromShape(shpCatPath);
+   PVector[] catPoints = getPointsFromShape(shpCatPath, 0.1f);
    cellCollection = imgGrid.getCellsFromPoints(catPoints);
    
 }
@@ -68,7 +69,10 @@ void draw(){
    }
    else if ( modes.isCurrentMode(PIXEL_UNDER_MOUSE) ){
          imgCell = imgGrid.getCellAtPoint(mouseX, mouseY);
-         image(imgCell.getImage(), imgCell.getX(), imgCell.getY());
+         // maybe mouse is out of range of image (or inside image, but on the edge pixels which do not fall into the grid)
+         if (imgCell != null){
+           image(imgCell.getImage(), imgCell.getX(), imgCell.getY());
+         }
    }
    else if ( modes.isCurrentMode(CAT_SHAPE) ){
          cellCollection.drawRandomCell();      
