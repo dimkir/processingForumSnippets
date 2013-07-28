@@ -142,6 +142,7 @@ class ImageGrid
       
       if ( ! isValidCol(prospectiveColN) ){
         dprintln(WARNING, "Coordinate x (" + x + ") is out of range");
+        return null;
       }
       
       return getCell(prospectiveRowN, prospectiveColN);
