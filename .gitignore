@@ -1,5 +1,18 @@
 *.class
 
+# Processing export directories #
+######################
+# 
+# Processing PDE environment rubbish.
+#
+######################
+application.linux32/
+application.linux64/
+application.macosx/
+application.windows32/
+application.windows64/
+web-export/
+
 # Package Files #
 *.jar
 *.war
