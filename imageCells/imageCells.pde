@@ -3,22 +3,26 @@ CellCollection cellCollection;
 
 String C_IMAGE_NAME = "image.jpg";
 PImage myImage;
-int C_ROW_COUNT = 20;
-int C_COL_COUNT = 20;
+int C_ROW_COUNT = 10;
+int C_COL_COUNT = 10;
 ImageCell imgCell;
 
 // define mode names
 final String RANDOM_PIXEL = "random_pixel";
 final String PIXEL_UNDER_MOUSE = "pixel_under_mouse";
 final String CAT_SHAPE = "cat_shape";
-Modes modes = new Modes(RANDOM_PIXEL, PIXEL_UNDER_MOUSE, CAT_SHAPE);
+final String BOUNCING_BALL = "bouncing_ball";
+Modes modes = new Modes(RANDOM_PIXEL, PIXEL_UNDER_MOUSE, CAT_SHAPE, BOUNCING_BALL);
 
+BouncingBall ball;
 
 void setup(){
-   size(800,600);
    // load image, so that we know it's size, to set sketch dimensions
-   myImage = loadImage(C_IMAGE_NAME); 
-   //size(myImage.width, myImage.height);
+   myImage = loadImage(C_IMAGE_NAME);
+  
+   //size(displayWidth,displayHeight);
+   //size(800,600);
+   size(myImage.width, myImage.height);
    
    // here we create a "grid" object out of the image.
    // now we can "query" each cell of the image via
@@ -38,6 +42,9 @@ void setup(){
    // the points are falling
    PVector[] catPoints = getPointsFromShape(shpCatPath, 0.1f);
    cellCollection = imgGrid.getCellsFromPoints(catPoints);
+   
+   
+   ball = new BouncingBall(width, height);
    
 }
 
@@ -76,6 +83,13 @@ void draw(){
    }
    else if ( modes.isCurrentMode(CAT_SHAPE) ){
          cellCollection.drawRandomCell();      
+   }
+   else if ( modes.isCurrentMode(BOUNCING_BALL) ){
+         ball.update();
+         imgCell = imgGrid.getCellAtPoint(ball.x, ball.y);
+         if ( imgCell != null ){
+            image(imgCell.getImage(), imgCell.getX(), imgCell.getY() );
+         }
    }
    else{
       // we only have 2 modes, so we shouldn't get to this "else"
