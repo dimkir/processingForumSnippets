@@ -1,7 +1,7 @@
 // =========================================================================
 class Table {
-  int rowCount;
-  String[][] data;
+
+  ArrayList arlis = new ArrayList();
   
   int mMapScreenWidth;
   int mMapScreenHeight;
@@ -14,7 +14,7 @@ class Table {
   * They will be calculated once during the CSV-loading stage
   * and later can be queried via getScreenX(row) an getScreenY(row) methods.
   */
-  PVector[] mScreenCoords;
+  ArrayList<PVector> mScreenCoords = new ArrayList<PVector>();
 
 
   Table(String filename, int wWidth, int hHeight, GeoRectangle geoRect) {
@@ -31,45 +31,35 @@ class Table {
           dprintln("Loaded from csv " + rows.length + " lines");
 
 
-    // init the array of pointers to stringars.
-          data = new String[rows.length][];
-    // here we will store screen coords for each point
-          mScreenCoords = new PVector[rows.length];
-    
-    
     // loop though all lines read from CSV (empty or commented #)
     // and add them to 'data' array
-    for (int i = 0; i < rows.length; i++) {
-      if (trim(rows[i]).length() == 0) {
-        continue; // skip empty rows
-      }
-      if (rows[i].startsWith("#")) {
-        continue;  // skip comment lines
-      }
-
-      // split the row on the tabs
-            dprintln("\nProcessing row: [" + rows[i] + "]");
-            String[] pieces = split(rows[i], ',');
-            dprintln("After splitting has " + pieces.length + " parts");
-            
-      // copy to the table array
-      data[rowCount] = pieces;
-      // calculate screen coords. 
-      mScreenCoords[rowCount] = calculateScreenCoords(pieces);      
-      rowCount++;
-      // this could be done in one fell swoop via:
-      //data[rowCount++] = split(rows[i], TAB);
-    }
-    // resize the 'data' array as necessary
-    //data = (String[][]) subset(data, 0, rowCount);
-    printDataToConsole();
-  }
+              for (int i = 0; i < rows.length; i++) {
+                        if (trim(rows[i]).length() == 0) {
+                          continue; // skip empty rows
+                        }
+                        if (rows[i].startsWith("#")) {
+                          continue;  // skip comment lines
+                        }
+                  
+                        // split the row on the tabs
+                              dprintln("\nProcessing row: [" + rows[i] + "]");
+                              String[] pieces = split(rows[i], ',');
+                              dprintln("After splitting has " + pieces.length + " parts");
+                              
+                        // copy to the table array
+                        arlis.add( pieces );
+                        // calculate screen coords. 
+                        mScreenCoords.add( calculateScreenCoords(pieces) );      
+              }//for
+              printDataToConsole();
+              
+  }//Table() 
 
   void printDataToConsole() {
-    dprintln("data[][] array length is: " + data.length);
+    dprintln("array length is: " + arlis.size());
     //return;
-    for (int i = 0 ; i < data.length ; i++) {
-      printlnDataRowToConsole(data[i]);
+    for (int i = 0 ; i < arlis.size() ; i++) {
+      printlnDataRowToConsole((String[])arlis.get(i));
     }
   }
 
@@ -79,7 +69,7 @@ class Table {
 
 
   int getRowCount() {
-    return rowCount;
+    return arlis.size();
   }
 
 
@@ -87,13 +77,7 @@ class Table {
   // DK: finds row by it's Langitude (50.123) parameter.. hmm.m.
   // that strange.
   int getRowIndex(String name) {
-    for (int i = 0; i < rowCount; i++) {
-      if (data[i][0].equals(name)) {
-        return i;
-      }
-    }
-    dprintln("No row named '" + name + "' was found");
-    return -1;
+      throw new RuntimeException("This was incorrect method. Which was deleted. Don't call it.");
   }
   
   
@@ -103,7 +87,8 @@ class Table {
   
   
   String getString(int rowIndex, int column) {
-    return data[rowIndex][column];
+//    return data[rowIndex][column];
+    return ((String[])arlis.get(rowIndex))[column];
   }
   
   // this one is strange as well.  
@@ -112,7 +97,7 @@ class Table {
   }
   
   
-  int getInt(String rowName, int column) {
+  int getIntByName(String rowName, int column) {
     return parseInt(getStringByName(rowName, column));
   }
   int getInt(int rowIndex, int column) {
@@ -138,42 +123,6 @@ class Table {
   
   
   
-  void setRowName(int row, String what) {
-    data[row][0] = what;
-  }
-  
-  
-  void setString(int rowIndex, int column, String what) {
-    data[rowIndex][column] = what;
-  }
-  void setString(String rowName, int column, String what) {
-    int rowIndex = getRowIndex(rowName);
-    data[rowIndex][column] = what;
-  }
-  
-  
-  void setInt(int rowIndex, int column, int what) {
-    data[rowIndex][column] = str(what);
-  }
-  
-  
-  void setInt(String rowName, int column, int what) {
-    int rowIndex = getRowIndex(rowName);
-    data[rowIndex][column] = str(what);
-  }
-  
-  
-  void setFloat(int rowIndex, int column, float what) {
-    data[rowIndex][column] = str(what);
-  }
-  
-  
-  void setFloat(String rowName, int column, float what) {
-    int rowIndex = getRowIndex(rowName);
-    data[rowIndex][column] = str(what);
-  }
-  
-  
   float getLatitude(int rowIndex){
      return getFloat(rowIndex, 0);
   }  
@@ -191,11 +140,11 @@ class Table {
   * and should be more portable when trying ProcessingJS.
   */
   float getScreenX(int row){
-     return mScreenCoords[row].x;
+     return mScreenCoords.get(row).x;
   }
   
   float getScreenY(int row){
-     return mScreenCoords[row].y;
+     return mScreenCoords.get(row).y;
   }
   
   
