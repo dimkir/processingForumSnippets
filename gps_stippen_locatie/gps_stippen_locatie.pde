@@ -58,14 +58,14 @@ void draw() {
 
 //    float x = (locationTable.getFloat(row, 1));     
 //    float y = (locationTable.getFloat(row, 0));
-    float y = locationTable.getLatitude(row);
-    float x = locationTable.getLongitude(row);
+    float lat_y = locationTable.getLatitude(row);
+    float lon_x = locationTable.getLongitude(row);
 
     //  float x = map(locationTable.getFloat(row, 0), mapGeoRight, mapGeoLeft, 0, width);
     //   float y = map(locationTable.getFloat(row, 1), mapGeoTop, mapGeoBottom, 0, height);
 
     //PVector p = geoToPixel(new PVector(x, y));
-    PVector p = geoToPixel(x, y); // we use this method to save 
+    PVector p = geoToPixel(lon_x, lat_y); // we use this method to save 
                                   // creation of extra PVector() object
                                   // each frame.
                                   
