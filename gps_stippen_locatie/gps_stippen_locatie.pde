@@ -1,3 +1,7 @@
+/**
+* These are limits for the LAT/LON which
+* define the "rect" in which drawing happens
+*/
 float mapGeoTop = 59;  //LAT
 float mapGeoBottom = 55; // lAT
 float mapGeoLeft = 10;  //LON
@@ -6,8 +10,15 @@ float mapGeoRight = 0;   //LON
 int counter;
 int counter2;
 
-int mapScreenWidth = width;
-int mapScreenHeight = height; 
+// These variables are only used inside of 
+// geoToPixel(). Because we move geoToPixel() into
+// Table class, we are going to keep thouse values
+// inside the class as "class member variables" 
+// mMapScreenWidth
+// mMapScreenHeight
+
+//int mapScreenWidth = width;
+//int mapScreenHeight = height; 
 
 Table locationTable;
 int rowCount;
@@ -22,13 +33,10 @@ void setup() {
   font = createFont("Georgia", 24);
   textFont(font, 24);
 
-  // these parameters must be before Table() initialization,
-  // because geoToPixel() uses them implicitly to convert lat/lon 
-  // to screen coordinates.  
-  mapScreenWidth = width;
-  mapScreenHeight = height; 
-  
-  locationTable = new Table("gps.csv");  // or .csv 
+
+  locationTable = new Table("gps.csv", width, height);  // we pass width/height so that
+                                                        // table precalculates
+                                                        // correctly screen positions 
 
   rowCount = locationTable.getRowCount();
 
@@ -155,6 +163,9 @@ class Table {
   int rowCount;
   String[][] data;
   
+  int mMapScreenWidth;
+  int mMapScreenHeight;
+  
   /**
   * Here we will be storing screen coordinates 
   * for each of the geograpihal points.
@@ -164,7 +175,10 @@ class Table {
   PVector[] mScreenCoords;
 
 
-  Table(String filename) {
+  Table(String filename, int wWidth, int hHeight) {
+    mMapScreenWidth = wWidth;
+    mMapScreenHeight = hHeight;
+    
     println("Trying to load file: [" + filename +"]");
     String[] rows = loadStrings(filename);
     if ( rows == null ) {
@@ -316,25 +330,27 @@ class Table {
      return scr;
   }
   
-}
 
+  
+  /**
+  * Convenience version of geoToPixel which takes
+  * PVector as parameter.
+  */
+  public PVector geoToPixel(PVector geoLocation)
+  {
+    return geoToPixel(geoLocation.x, geoLocation.y);
+  }
+  
+  /**
+  * Just converts geo-location to screen coordinate
+  * based on pre-defined parameters.
+  */
+  public PVector geoToPixel(float lon_x, float lat_y){
+    return new PVector(mMapScreenWidth*(lon_x-mapGeoLeft)/
+      (mapGeoRight-mapGeoLeft), mMapScreenHeight -
+      mMapScreenHeight*(lat_y-mapGeoBottom)
+      /(mapGeoTop-mapGeoBottom));
+  }  
+  
+}// Table class
 
-/**
-* Convenience version of geoToPixel which takes
-* PVector as parameter.
-*/
-public PVector geoToPixel(PVector geoLocation)
-{
-  return geoToPixel(geoLocation.x, geoLocation.y);
-}
-
-/**
-* Just converts geo-location to screen coordinate
-* based on pre-defined parameters.
-*/
-public PVector geoToPixel(float lon_x, float lat_y){
-  return new PVector(mapScreenWidth*(lon_x-mapGeoLeft)/
-    (mapGeoRight-mapGeoLeft), mapScreenHeight -
-    mapScreenHeight*(lat_y-mapGeoBottom)
-    /(mapGeoTop-mapGeoBottom));
-}
