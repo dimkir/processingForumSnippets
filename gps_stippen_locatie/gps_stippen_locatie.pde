@@ -65,8 +65,32 @@ void draw() {
     PVector p = geoToPixel(new PVector(x, y));
     //text( locationTable.getString(row, 1), p.x+4,p.y+4);     
 
-    fill(0, locationTable.getFloat(row, 0));
-    ellipse(p.x, p.y, locationTable.getFloat(row, 2)/2.5, locationTable.getFloat(row, 2)/2.5);
+    // all the ellipse logic can be encapsulated into a function
+    drawEllipses(p);
+
+    float t = map(mouseX, 0, width, -5, 5);
+    //  curveTightness(t);
+    //  curveVertex(p.x, p.y);
+  }
+//  endShape();
+}
+
+
+void drawEllipses(PVector p){
+    
+    // get alpha 
+    // calcualted as: ??
+    float fFillAlpha = locationTable.getFloat(row, 0); 
+    fill(0, fFillAlpha);
+      
+    // calculate ellipse width/height
+    // based on: ???
+    float ellipseWidth = locationTable.getFloat(row, 2)/2.5; 
+    float ellipseHeight = locationTable.getFloat(row, 2)/2.5;
+    
+    ellipse(p.x, p.y, ellipseWidth , ellipseHeight );
+
+    // draw rest of ellipses which have fixed sizes.    
     fill(255);
     ellipse(p.x, p.y, 16, 16);
 
@@ -76,14 +100,8 @@ void draw() {
     ellipse(p.x, p.y, 8, 8);
     fill(0);
     ellipse(p.x, p.y, 4, 4);
-    noFill();
-    float t = map(mouseX, 0, width, -5, 5);
-    //  curveTightness(t);
-    //  curveVertex(p.x, p.y);
-  }
-//  endShape();
+    noFill();  
 }
-
 
 
 // =========================================================================
