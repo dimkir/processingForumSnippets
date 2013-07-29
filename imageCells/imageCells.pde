@@ -20,9 +20,9 @@ void setup(){
    // load image, so that we know it's size, to set sketch dimensions
    myImage = loadImage(C_IMAGE_NAME);
   
-   //size(displayWidth,displayHeight);
+   size(displayWidth,displayHeight);
    //size(800,600);
-   size(myImage.width, myImage.height);
+   //size(myImage.width, myImage.height);
    
    // here we create a "grid" object out of the image.
    // now we can "query" each cell of the image via
@@ -32,19 +32,14 @@ void setup(){
    // create and set arial as font
    textFont(createFont("Arial", 22));   
    
-   // here we do a bit of "acrobatics" in order to load "cat_path".
-   // TODO: just make one method which would be loading cat path.
-   shpChineseCat = loadShape("chinese_cat.svg");
-   shpLayer1 = getShapeByNameOrThrow("layer1", shpChineseCat);
-   shpCatPath = getShapeByNameOrThrow("cat_path", shpLayer1);
-
-   // here we actually ask ImageGrid to return cells, into which 
-   // the points are falling
-   PVector[] catPoints = getPointsFromShape(shpCatPath, 0.1f);
+  
+   MyShape2 catShape2 = new MyShape2("chinese_cat.svg", "cat_path");
+   PVector[] catPoints = catShape2.getPoints(0.1f);
+   //PVector[] catPoints = getPointsFromShape(shpCatPath, 0.1f);
    cellCollection = imgGrid.getCellsFromPoints(catPoints);
    
    
-   ball = new BouncingBall(width, height);
+   ball = new BouncingBall(width, height, 3.0, 3.0);
    
 }
 
