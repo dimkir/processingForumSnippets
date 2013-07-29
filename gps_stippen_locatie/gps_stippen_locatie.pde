@@ -56,8 +56,10 @@ void draw() {
 
   for (int row = 0; row < rowCount; row++) {
 
-    float x = (locationTable.getFloat(row, 1));     
-    float y = (locationTable.getFloat(row, 0));       
+//    float x = (locationTable.getFloat(row, 1));     
+//    float y = (locationTable.getFloat(row, 0));
+    float y = locationTable.getLatitude(row);
+    float x = locationTable.getLongitude(row);
 
     //  float x = map(locationTable.getFloat(row, 0), mapGeoRight, mapGeoLeft, 0, width);
     //   float y = map(locationTable.getFloat(row, 1), mapGeoTop, mapGeoBottom, 0, height);
@@ -69,7 +71,10 @@ void draw() {
     // calcualted as: latitude (NS) of the point like 57.123 
     // range of the world latitudes is from -90 to +90
     // the file sample it is in range around 57-56
-    float alpha = locationTable.getFloat(row, 0);
+//    float alpha = locationTable.getFloat(row, 0);
+    float alpha = locationTable.getLatitude(row);
+    
+    
  
     // calculate ellipse diameter
     // based on: 
@@ -213,6 +218,13 @@ class Table {
     return parseFloat(getString(rowName, column));
   }
   
+  float getLatitude(int rowIndex){
+     return getFloat(rowIndex, 0);
+  }  
+  
+  float getLongitude(int rowIndex){
+     return getFloat(rowIndex, 1);
+  }
   
   float getFloat(int rowIndex, int column) {
     return parseFloat(getString(rowIndex, column));
@@ -241,6 +253,9 @@ class Table {
     int rowIndex = getRowIndex(rowName);
     data[rowIndex][column] = str(what);
   }
+  
+  
+  
 }
 
 
