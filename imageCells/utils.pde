@@ -41,10 +41,16 @@ PVector[] getPointsFromShape(PShape shp){
 
 /**
 * Creates array of points from the shape. 
-* What happens if there's 0 shapes?
+* WARNING: What happens if there's 0 shapes? 
 * The simpliest solution is to throw an exception.
+* 
+* BUG: Looks like if there're no shapes getVertexCount() throws
+* a null pointer exception because of this bug:
+* {@link https://github.com/processing/processing-android/issues/49}
+* 
 */
 PVector[] getPointsFromShape(PShape shp, float probability){
+   println("getPointsFromShape(" + shp.getName() + ", " + probability);
    int vertexCount = shp.getVertexCount();
    if ( vertexCount == 0 ){
       throw new RuntimeException(
@@ -52,12 +58,13 @@ PVector[] getPointsFromShape(PShape shp, float probability){
       "Maybe children nodes have. Shape has: " + shp.getChildCount() + " children");
    }
 //   PVector[] points = new PVector[vertexCount];
-
+   println("Shape [" + shp.getName() + "] has " + vertexCount + " points");
    ArrayList<PVector> points = new ArrayList<PVector>();
    
    for(int i = 0; i < vertexCount ; i++){
       float r=  random(1.0f);
       if ( r < probability ){
+        println("Requesting shp.getVertex("+ i+ ")");
         points.add(shp.getVertex(i));
       }
    }  
