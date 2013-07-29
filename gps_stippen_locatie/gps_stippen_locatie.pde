@@ -21,12 +21,17 @@ void setup() {
   size(1000, 800);
   font = createFont("Georgia", 24);
   textFont(font, 24);
+
+  // these parameters must be before Table() initialization,
+  // because geoToPixel() uses them implicitly to convert lat/lon 
+  // to screen coordinates.  
+  mapScreenWidth = width;
+  mapScreenHeight = height; 
+  
   locationTable = new Table("gps.csv");  // or .csv 
 
   rowCount = locationTable.getRowCount();
 
-  mapScreenWidth = width;
-  mapScreenHeight = height; 
   smooth();
 }
 
@@ -63,11 +68,17 @@ void draw() {
 
     //  float x = map(locationTable.getFloat(row, 0), mapGeoRight, mapGeoLeft, 0, width);
     //   float y = map(locationTable.getFloat(row, 1), mapGeoTop, mapGeoBottom, 0, height);
-
+    
+    float screen_x = locationTable.getScreenX(row);
+    float screen_y = locationTable.getScreenY(row);    
+    
     //PVector p = geoToPixel(new PVector(x, y));
-    PVector p = geoToPixel(lon_x, lat_y); // we use this method to save 
-                                  // creation of extra PVector() object
-                                  // each frame.
+// There's no point converting lat/long into screen_x/screen_y 16 000 times per second.
+// it's better to do it once, when we load CSV file and then just access those coodinates.
+
+//    PVector p = geoToPixel(lon_x, lat_y); // we use this method to save 
+//                                          // creation of extra PVector() object
+//                                          // each frame.
                                   
     //text( locationTable.getString(row, 1), p.x+4,p.y+4);     
 
@@ -92,8 +103,7 @@ void draw() {
     //57.771801,4.853899, 111     
     float diameter = locationTable.getFloat(row, 2)/2.5;
     
-    // all the ellipse logic can be encapsulated into a function
-    drawEllipses(p, alpha, diameter);
+    drawEllipses(screen_x, screen_y, alpha, diameter);
 
     float t = map(mouseX, 0, width, -5, 5);
     //  curveTightness(t);
@@ -104,29 +114,36 @@ void draw() {
 
 
 /**
+* Just convenience method, if you want to use PVector 
+* to draw circles.
+*/
+void drawEllipses(PVector p, float fFillAlpha, float ellipseDiameter){
+   drawEllipses(p.x, p.y, fFillAlpha, ellipseDiameter);
+}
+
+/**
 * Draws concentrating circles at given point.
 * The bottom circle is of given diameter and given alpha.
 */
-void drawEllipses(PVector p, float fFillAlpha, float ellipseDiameter){
-    
+void drawEllipses( float px, float py, float fFillAlpha, float ellipseDiameter){
      
     fill(0, fFillAlpha);
       
     float ellipseWidth = ellipseDiameter;
     float ellipseHeight = ellipseDiameter;
     
-    ellipse(p.x, p.y, ellipseWidth , ellipseHeight );
+    ellipse(px, py, ellipseWidth , ellipseHeight );
 
     // draw rest of concetrating circles with fixed sizes    
     fill(255);
-    ellipse(p.x, p.y, 16, 16);
+    ellipse(px, py, 16, 16);
 
     fill(0);
-    ellipse(p.x, p.y, 12, 12);
+    ellipse(px, py, 12, 12);
     fill(255);
-    ellipse(p.x, p.y, 8, 8);
+    ellipse(px, py, 8, 8);
     fill(0);
-    ellipse(p.x, p.y, 4, 4);
+    ellipse(px, py, 4, 4);
     noFill();  
 }
 
@@ -137,6 +154,14 @@ void drawEllipses(PVector p, float fFillAlpha, float ellipseDiameter){
 class Table {
   int rowCount;
   String[][] data;
+  
+  /**
+  * Here we will be storing screen coordinates 
+  * for each of the geograpihal points.
+  * They will be calculated once during the CSV-loading stage
+  * and later can be queried via getScreenX(row) an getScreenY(row) methods.
+  */
+  PVector[] mScreenCoords;
 
 
   Table(String filename) {
@@ -149,6 +174,9 @@ class Table {
 
 
     data = new String[rows.length][];
+
+    // here we will store screen coords for each point
+    mScreenCoords = new PVector[rows.length];
     for (int i = 0; i < rows.length; i++) {
       if (trim(rows[i]).length() == 0) {
         continue; // skip empty rows
@@ -162,6 +190,8 @@ class Table {
       println("After splitting has " + pieces.length + " parts");
       // copy to the table array
       data[rowCount] = pieces;
+      // calculate screen coords. 
+      mScreenCoords[rowCount] = calculateScreenCoords(pieces);      
       rowCount++;
       // this could be done in one fell swoop via:
       //data[rowCount++] = split(rows[i], TAB);
@@ -259,6 +289,32 @@ class Table {
   }
   
   
+  /**
+  * Returns precalculated during load stage 
+  * coordinates on the screen for the points.
+  * Note that I am using 1-dimensional array here
+  * to store coordinates. Simply because 1-d arrays are
+  * more obvious for mind, easier to implement, harder to make mistake
+  * and should be more portable when trying ProcessingJS.
+  */
+  float getScreenX(int row){
+     return mScreenCoords[row].x;
+  }
+  
+  float getScreenY(int row){
+     return mScreenCoords[row].y;
+  }
+  
+  
+  PVector calculateScreenCoords(String[] splittedCsvLine){
+     float lat_y =  parseFloat(splittedCsvLine[0]);
+     float lon_x =  parseFloat(splittedCsvLine[1]);
+     println("Calculating screen coordinates: ");
+     print(splittedCsvLine);
+     PVector scr =geoToPixel(lon_x, lat_y); 
+     println(scr);
+     return scr;
+  }
   
 }
 
@@ -276,9 +332,9 @@ public PVector geoToPixel(PVector geoLocation)
 * Just converts geo-location to screen coordinate
 * based on pre-defined parameters.
 */
-public PVector geoToPixel(float x, float y){
-  return new PVector(mapScreenWidth*(x-mapGeoLeft)/
+public PVector geoToPixel(float lon_x, float lat_y){
+  return new PVector(mapScreenWidth*(lon_x-mapGeoLeft)/
     (mapGeoRight-mapGeoLeft), mapScreenHeight -
-    mapScreenHeight*(y-mapGeoBottom)
+    mapScreenHeight*(lat_y-mapGeoBottom)
     /(mapGeoTop-mapGeoBottom));
 }
