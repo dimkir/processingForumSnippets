@@ -16,12 +16,7 @@ float mpGeoLeft = 10;  //LON
 float mpGeoRight = 0;   //LON
 GeoRectangle geoRectangle = new GeoRectangle(mpGeoLeft, mpGeoTop, mpGeoRight, mpGeoBottom);
 
-int counter;
-int counter2;
-
 Table locationTable;
-int rowCount;
-
 
 PFont font;
 
@@ -32,15 +27,10 @@ void setup() {
   font = createFont("Georgia", 24);
   textFont(font, 24);
 
-
-  locationTable = new Table("gps.csv", width, height, geoRectangle);  // we pass width/height so that
-                                                        // table precalculates
-                                                        // correctly screen positions 
-
-  rowCount = locationTable.getRowCount();
+  locationTable = new Table("gps.csv", width, height, geoRectangle);  
 
   smooth();
-  noLoop();
+  //noLoop();
 }
 
 
@@ -49,61 +39,20 @@ void draw() {
   background(255);
   noStroke();
 
-
-  // increases counter2 every up to 10 and then increases counter
-  counter2 = counter2+1;
-
-  if (counter2  == 10) {
-    if (counter<rowCount) {
-      counter = counter+1;
-    }
-
-    counter2 = 0;
-  }
-
-
-  for (int row = 0; row < rowCount; row++) {
-
-//    float lat_y = locationTable.getLatitude(row);
-//    float lon_x = locationTable.getLongitude(row);
-
-    //  float x = map(locationTable.getFloat(row, 0), mapGeoRight, mapGeoLeft, 0, width);
-    //   float y = map(locationTable.getFloat(row, 1), mapGeoTop, mapGeoBottom, 0, height);
+  for (int row = 0; row < locationTable.getRowCount() ; row++) {
     
     float screen_x = locationTable.getScreenX(row);
     float screen_y = locationTable.getScreenY(row);    
-    
-                                 
-    //text( locationTable.getString(row, 1), p.x+4,p.y+4);     
 
-    // get alpha 
-    // calcualted as: latitude (NS) of the point like 57.123 
-    // range of the world latitudes is from -90 to +90
-    // the file sample it is in range around 57-56
-//    float alpha = locationTable.getFloat(row, 0);
     float alpha = locationTable.getLatitude(row);
     
-    
- 
-    // calculate ellipse diameter
-    // based on: 
-    
-    // not on longitude, but on some number like 111 or 64 or 34:
-    // divided by 2.5
-    //57.693782,5.12873, 111
-    //57.719688,5.346774, 111
-    //56.856993,4.290668, 64
-    //57.247939,6.203016, 34
-    //57.771801,4.853899, 111     
     float diameter = locationTable.getFloat(row, 2)/2.5;
     
     drawEllipses(screen_x, screen_y, alpha, diameter);
 
     float t = map(mouseX, 0, width, -5, 5);
-    //  curveTightness(t);
-    //  curveVertex(p.x, p.y);
   }
-//  endShape();
+
 }
 
 
