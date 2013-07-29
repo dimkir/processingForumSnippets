@@ -66,7 +66,7 @@ void draw() {
     //text( locationTable.getString(row, 1), p.x+4,p.y+4);     
 
     // all the ellipse logic can be encapsulated into a function
-    drawEllipses(p);
+    drawEllipses(p, row);
 
     float t = map(mouseX, 0, width, -5, 5);
     //  curveTightness(t);
@@ -76,21 +76,32 @@ void draw() {
 }
 
 
-void drawEllipses(PVector p){
+void drawEllipses(PVector p, int row){
     
     // get alpha 
-    // calcualted as: ??
+    // calcualted as: latitude (NS) of the point like 57.123 
+    // range of the world latitudes is from -90 to +90
+    // the file sample it is in range around 57-56
     float fFillAlpha = locationTable.getFloat(row, 0); 
     fill(0, fFillAlpha);
       
     // calculate ellipse width/height
-    // based on: ???
+    // based on: 
+    
+    // not on longitude, but on some number like 111 or 64 or 34:
+    // divided by 2.5
+    //57.693782,5.12873, 111
+    //57.719688,5.346774, 111
+    //56.856993,4.290668, 64
+    //57.247939,6.203016, 34
+    //57.771801,4.853899, 111    
+    
     float ellipseWidth = locationTable.getFloat(row, 2)/2.5; 
     float ellipseHeight = locationTable.getFloat(row, 2)/2.5;
     
     ellipse(p.x, p.y, ellipseWidth , ellipseHeight );
 
-    // draw rest of ellipses which have fixed sizes.    
+    // draw rest of concetrating circles with fixed sizes    
     fill(255);
     ellipse(p.x, p.y, 16, 16);
 
