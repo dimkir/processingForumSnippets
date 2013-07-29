@@ -64,7 +64,11 @@ void draw() {
     //  float x = map(locationTable.getFloat(row, 0), mapGeoRight, mapGeoLeft, 0, width);
     //   float y = map(locationTable.getFloat(row, 1), mapGeoTop, mapGeoBottom, 0, height);
 
-    PVector p = geoToPixel(new PVector(x, y));
+    //PVector p = geoToPixel(new PVector(x, y));
+    PVector p = geoToPixel(x, y); // we use this method to save 
+                                  // creation of extra PVector() object
+                                  // each frame.
+                                  
     //text( locationTable.getString(row, 1), p.x+4,p.y+4);     
 
     // get alpha 
@@ -259,12 +263,22 @@ class Table {
 }
 
 
-
+/**
+* Convenience version of geoToPixel which takes
+* PVector as parameter.
+*/
 public PVector geoToPixel(PVector geoLocation)
 {
-  return new PVector(mapScreenWidth*(geoLocation.x-mapGeoLeft)/
-    (mapGeoRight-mapGeoLeft), mapScreenHeight -
-    mapScreenHeight*(geoLocation.y-mapGeoBottom)
-    /(mapGeoTop-mapGeoBottom));
+  return geoToPixel(geoLocation.x, geoLocation.y);
 }
 
+/**
+* Just converts geo-location to screen coordinate
+* based on pre-defined parameters.
+*/
+public PVector geoToPixel(float x, float y){
+  return new PVector(mapScreenWidth*(x-mapGeoLeft)/
+    (mapGeoRight-mapGeoLeft), mapScreenHeight -
+    mapScreenHeight*(y-mapGeoBottom)
+    /(mapGeoTop-mapGeoBottom));
+}
