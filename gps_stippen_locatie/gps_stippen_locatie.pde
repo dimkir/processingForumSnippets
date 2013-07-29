@@ -1,4 +1,11 @@
 /**
+* This sketch loads geographical coordinates from CSV-file
+* and displayes them on the screen.
+*
+*/
+
+
+/**
 * These are limits for the LAT/LON which
 * define the "rect" in which drawing happens
 */
@@ -9,16 +16,6 @@ float mapGeoRight = 0;   //LON
 
 int counter;
 int counter2;
-
-// These variables are only used inside of 
-// geoToPixel(). Because we move geoToPixel() into
-// Table class, we are going to keep thouse values
-// inside the class as "class member variables" 
-// mMapScreenWidth
-// mMapScreenHeight
-
-//int mapScreenWidth = width;
-//int mapScreenHeight = height; 
 
 Table locationTable;
 int rowCount;
@@ -62,17 +59,10 @@ void draw() {
   }
 
 
-
-  // shape is not needed here as
-  // you don't use any shape methods
-//  beginShape();
-
   for (int row = 0; row < rowCount; row++) {
 
-//    float x = (locationTable.getFloat(row, 1));     
-//    float y = (locationTable.getFloat(row, 0));
-    float lat_y = locationTable.getLatitude(row);
-    float lon_x = locationTable.getLongitude(row);
+//    float lat_y = locationTable.getLatitude(row);
+//    float lon_x = locationTable.getLongitude(row);
 
     //  float x = map(locationTable.getFloat(row, 0), mapGeoRight, mapGeoLeft, 0, width);
     //   float y = map(locationTable.getFloat(row, 1), mapGeoTop, mapGeoBottom, 0, height);
@@ -80,14 +70,7 @@ void draw() {
     float screen_x = locationTable.getScreenX(row);
     float screen_y = locationTable.getScreenY(row);    
     
-    //PVector p = geoToPixel(new PVector(x, y));
-// There's no point converting lat/long into screen_x/screen_y 16 000 times per second.
-// it's better to do it once, when we load CSV file and then just access those coodinates.
-
-//    PVector p = geoToPixel(lon_x, lat_y); // we use this method to save 
-//                                          // creation of extra PVector() object
-//                                          // each frame.
-                                  
+                                 
     //text( locationTable.getString(row, 1), p.x+4,p.y+4);     
 
     // get alpha 
@@ -179,18 +162,23 @@ class Table {
     mMapScreenWidth = wWidth;
     mMapScreenHeight = hHeight;
     
-    println("Trying to load file: [" + filename +"]");
-    String[] rows = loadStrings(filename);
-    if ( rows == null ) {
-      throw new RuntimeException("loadStrings() returned null");
-    }
-    println("Loaded from csv " + rows.length + " lines");
+    // loads CSV file with lat/long data
+          println("Trying to load file: [" + filename +"]");
+          String[] rows = loadStrings(filename);
+          if ( rows == null ) {
+            throw new RuntimeException("loadStrings() returned null");
+          }
+          println("Loaded from csv " + rows.length + " lines");
 
 
-    data = new String[rows.length][];
-
+    // init the array of pointers to stringars.
+          data = new String[rows.length][];
     // here we will store screen coords for each point
-    mScreenCoords = new PVector[rows.length];
+          mScreenCoords = new PVector[rows.length];
+    
+    
+    // loop though all lines read from CSV (empty or commented #)
+    // and add them to 'data' array
     for (int i = 0; i < rows.length; i++) {
       if (trim(rows[i]).length() == 0) {
         continue; // skip empty rows
@@ -198,10 +186,12 @@ class Table {
       if (rows[i].startsWith("#")) {
         continue;  // skip comment lines
       }
+
       // split the row on the tabs
-      println("\nProcessing row: [" + rows[i] + "]");
-      String[] pieces = split(rows[i], ',');
-      println("After splitting has " + pieces.length + " parts");
+            println("\nProcessing row: [" + rows[i] + "]");
+            String[] pieces = split(rows[i], ',');
+            println("After splitting has " + pieces.length + " parts");
+            
       // copy to the table array
       data[rowCount] = pieces;
       // calculate screen coords. 
@@ -245,26 +235,84 @@ class Table {
     println("No row named '" + name + "' was found");
     return -1;
   }
+  
+  
   String getRowName(int row) {
     return getString(row, 0);
   }
+  
+  
   String getString(int rowIndex, int column) {
     return data[rowIndex][column];
   }
-  String getString(String rowName, int column) {
+  
+  // this one is strange as well.  
+  String getStringByName(String rowName, int column) {
     return getString(getRowIndex(rowName), column);
   }
+  
+  
   int getInt(String rowName, int column) {
-    return parseInt(getString(rowName, column));
+    return parseInt(getStringByName(rowName, column));
   }
   int getInt(int rowIndex, int column) {
     return parseInt(getString(rowIndex, column));
   }
   
   
-  float getFloat(String rowName, int column) {
-    return parseFloat(getString(rowName, column));
+  /**
+  * The cause of the bug was here. Because 
+  * PJS was calling getFloat(String, int)
+  * instead of calling getFloat(int, int)
+  */
+  float getFloatByName(String rowName, int column) {
+    return parseFloat(getStringByName(rowName, column));
   }
+  
+
+  
+  
+  float getFloat(int rowIndex, int column) {
+    return parseFloat(getString(rowIndex, column));
+  }
+  
+  
+  
+  void setRowName(int row, String what) {
+    data[row][0] = what;
+  }
+  
+  
+  void setString(int rowIndex, int column, String what) {
+    data[rowIndex][column] = what;
+  }
+  void setString(String rowName, int column, String what) {
+    int rowIndex = getRowIndex(rowName);
+    data[rowIndex][column] = what;
+  }
+  
+  
+  void setInt(int rowIndex, int column, int what) {
+    data[rowIndex][column] = str(what);
+  }
+  
+  
+  void setInt(String rowName, int column, int what) {
+    int rowIndex = getRowIndex(rowName);
+    data[rowIndex][column] = str(what);
+  }
+  
+  
+  void setFloat(int rowIndex, int column, float what) {
+    data[rowIndex][column] = str(what);
+  }
+  
+  
+  void setFloat(String rowName, int column, float what) {
+    int rowIndex = getRowIndex(rowName);
+    data[rowIndex][column] = str(what);
+  }
+  
   
   float getLatitude(int rowIndex){
      return getFloat(rowIndex, 0);
@@ -273,35 +321,6 @@ class Table {
   float getLongitude(int rowIndex){
      return getFloat(rowIndex, 1);
   }
-  
-  float getFloat(int rowIndex, int column) {
-    return parseFloat(getString(rowIndex, column));
-  }
-  void setRowName(int row, String what) {
-    data[row][0] = what;
-  }
-  void setString(int rowIndex, int column, String what) {
-    data[rowIndex][column] = what;
-  }
-  void setString(String rowName, int column, String what) {
-    int rowIndex = getRowIndex(rowName);
-    data[rowIndex][column] = what;
-  }
-  void setInt(int rowIndex, int column, int what) {
-    data[rowIndex][column] = str(what);
-  }
-  void setInt(String rowName, int column, int what) {
-    int rowIndex = getRowIndex(rowName);
-    data[rowIndex][column] = str(what);
-  }
-  void setFloat(int rowIndex, int column, float what) {
-    data[rowIndex][column] = str(what);
-  }
-  void setFloat(String rowName, int column, float what) {
-    int rowIndex = getRowIndex(rowName);
-    data[rowIndex][column] = str(what);
-  }
-  
   
   /**
   * Returns precalculated during load stage 
