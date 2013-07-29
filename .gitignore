@@ -13,6 +13,8 @@ application.windows32/
 application.windows64/
 web-export/
 
+sketch.properties
+
 # Package Files #
 *.jar
 *.war
