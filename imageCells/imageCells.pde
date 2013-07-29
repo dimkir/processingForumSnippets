@@ -1,6 +1,9 @@
 ImageGrid imgGrid;
 CellCollection cellCollection;
 
+/* @pjs preload="image.jpg"; */
+/* @pjs preload="chinese_cat.svg"; */
+/* @pjs preload="chinese_cat.svg.xml"; */
 String C_IMAGE_NAME = "image.jpg";
 PImage myImage;
 int C_ROW_COUNT = 10;
@@ -20,8 +23,8 @@ void setup(){
    // load image, so that we know it's size, to set sketch dimensions
    myImage = loadImage(C_IMAGE_NAME);
   
-   size(displayWidth,displayHeight);
-   //size(800,600);
+   //size(displayWidth,displayHeight);
+   size(800,600);
    //size(myImage.width, myImage.height);
    
    // here we create a "grid" object out of the image.
