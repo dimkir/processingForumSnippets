@@ -47,6 +47,7 @@ PVector[] getPointsFromShape(PShape shp){
 * BUG: Looks like if there're no shapes getVertexCount() throws
 * a null pointer exception because of this bug:
 * {@link https://github.com/processing/processing-android/issues/49}
+* Also looks like if node is empty getVertexCount() in android will crash.
 * 
 */
 PVector[] getPointsFromShape(PShape shp, float probability){
