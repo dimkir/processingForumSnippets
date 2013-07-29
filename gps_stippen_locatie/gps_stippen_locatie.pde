@@ -65,8 +65,26 @@ void draw() {
     PVector p = geoToPixel(new PVector(x, y));
     //text( locationTable.getString(row, 1), p.x+4,p.y+4);     
 
+    // get alpha 
+    // calcualted as: latitude (NS) of the point like 57.123 
+    // range of the world latitudes is from -90 to +90
+    // the file sample it is in range around 57-56
+    float alpha = locationTable.getFloat(row, 0);
+ 
+    // calculate ellipse diameter
+    // based on: 
+    
+    // not on longitude, but on some number like 111 or 64 or 34:
+    // divided by 2.5
+    //57.693782,5.12873, 111
+    //57.719688,5.346774, 111
+    //56.856993,4.290668, 64
+    //57.247939,6.203016, 34
+    //57.771801,4.853899, 111     
+    float diameter = locationTable.getFloat(row, 2)/2.5;
+    
     // all the ellipse logic can be encapsulated into a function
-    drawEllipses(p, row);
+    drawEllipses(p, alpha, diameter);
 
     float t = map(mouseX, 0, width, -5, 5);
     //  curveTightness(t);
@@ -76,28 +94,17 @@ void draw() {
 }
 
 
-void drawEllipses(PVector p, int row){
+/**
+* Draws concentrating circles at given point.
+* The bottom circle is of given diameter and given alpha.
+*/
+void drawEllipses(PVector p, float fFillAlpha, float ellipseDiameter){
     
-    // get alpha 
-    // calcualted as: latitude (NS) of the point like 57.123 
-    // range of the world latitudes is from -90 to +90
-    // the file sample it is in range around 57-56
-    float fFillAlpha = locationTable.getFloat(row, 0); 
+     
     fill(0, fFillAlpha);
       
-    // calculate ellipse width/height
-    // based on: 
-    
-    // not on longitude, but on some number like 111 or 64 or 34:
-    // divided by 2.5
-    //57.693782,5.12873, 111
-    //57.719688,5.346774, 111
-    //56.856993,4.290668, 64
-    //57.247939,6.203016, 34
-    //57.771801,4.853899, 111    
-    
-    float ellipseWidth = locationTable.getFloat(row, 2)/2.5; 
-    float ellipseHeight = locationTable.getFloat(row, 2)/2.5;
+    float ellipseWidth = ellipseDiameter;
+    float ellipseHeight = ellipseDiameter;
     
     ellipse(p.x, p.y, ellipseWidth , ellipseHeight );
 
