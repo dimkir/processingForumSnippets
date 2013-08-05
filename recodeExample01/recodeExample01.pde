@@ -1,3 +1,5 @@
+import processing.pdf.*;
+
 /* 
 Part of the ReCode Project (http://recodeproject.com)
 Based on "Cube Limit Series - Inward" by Manfred Mohr
@@ -68,7 +70,7 @@ void setup(){
     size(990, 990, P3D);
     beginRaw(PDF, "something.pdf");
     ortho();
-    background(0); //
+    //background(0); // this won't work in PDF, you need draw black rect istead
     fill(0); 
     rect(0,0, width, height);
     
