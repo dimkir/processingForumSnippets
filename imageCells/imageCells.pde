@@ -1,3 +1,9 @@
+/**
+* Example sketch of splitting image into cells.
+* Works under Processing Java and Android. Doesn't work in JavaScript mode.
+*
+*/
+
 ImageGrid imgGrid;
 CellCollection cellCollection;
 
