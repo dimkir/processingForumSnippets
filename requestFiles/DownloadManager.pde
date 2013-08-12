@@ -129,7 +129,7 @@ implements AsyncBytesLoader.ILoaderCompleteListener
 
 
 
-DownloadManager prepareDownloadObject(){
+DownloadManager setupDownloadManager(){
    System.setProperty("http.agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.95 Safari/537.36");  
    DownloadManager so = new DownloadManager(this);
    so.setOnDownloadComplete(new IOnDownloadComplete(){
