@@ -4,7 +4,7 @@ interface IAsyncDownloadJobCompleteListener
 }
 
 
-public class SpecialObject
+public class DownloadManager
 implements IAsyncDownloadJobCompleteListener
 {
    PApplet mPapp;
@@ -13,7 +13,7 @@ implements IAsyncDownloadJobCompleteListener
    
    ArrayList<DownloadJob> completedDownloadJobs = new ArrayList<DownloadJob>();
    
-   SpecialObject(PApplet pp){
+   DownloadManager(PApplet pp){
        mPapp = pp;     
        pp.registerMethod("pre", this);
 
@@ -129,9 +129,9 @@ implements AsyncBytesLoader.ILoaderCompleteListener
 
 
 
-SpecialObject prepareDownloadObject(){
+DownloadManager prepareDownloadObject(){
    System.setProperty("http.agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.95 Safari/537.36");  
-   SpecialObject so = new SpecialObject(this);
+   DownloadManager so = new DownloadManager(this);
    so.setOnDownloadComplete(new IOnDownloadComplete(){
        /**
        * You add your code here of what do you want to do upon download.

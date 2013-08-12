@@ -16,12 +16,12 @@
 ArrayList<PImage> myImages = new ArrayList();
 
 
-SpecialObject so;
+DownloadManager dm;
 void setup(){
   size(800,600);
     
 
-  so = prepareDownloadObject();
+  dm = prepareDownloadObject();
   
   // prepare list of urls which we want to download.
   // you can download ANY types of files with the downloadobject
@@ -41,7 +41,7 @@ void setup(){
   // submit urls to the download manager, 
   // so that he starts asynchronouse download.
   for(String hugeImage : hugeImageURLs){
-    so.submitDownloadJob(hugeImage);
+    dm.submitDownloadJob(hugeImage);
   }
   
   
