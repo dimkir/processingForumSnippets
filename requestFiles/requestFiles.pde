@@ -67,8 +67,15 @@ void downloadJobComplete(DownloadJob djob){
       // processed it the way you want.
       PImage img = convertBytesToPImage(bbb, "jpg");
       
-      myImages.add(img);
-      fileCount++;
+      // we need to test if the image is ok, because
+      // sometimes you may download incomplete image (eg. server drops connection or internet connection is bad)
+      // or sometimes instead of the requested image file you may get 404 error (if file was moved) or some other
+      // error. So we need to check if the conversion from bytes[] into image was ok.
+      if (  img != null ){  
+            
+            myImages.add(img);
+      }
+
       
    }
    else{

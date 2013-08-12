@@ -56,7 +56,7 @@ PImage convertBytesToPImage(byte[] imageFileBytes, String imageExtension){
          println("image was invalid, we don't add it to the image arraylist");
          return null;
       }
-      
+      fileCount++;
       return img;
       
 }      
