@@ -1,8 +1,15 @@
 /**
 * This sketch illustrates how to download files 
-* asynchronously from processing. 
+* asynchronously from processing.  
+*
 * Keep in mind that all the files will be downloaded directly
-* to memory. Th
+* to memory, so if you decide to download huge zip-file,
+* which fills up all memory, you'll get OutOfMemory exception.
+*
+* In this sketch for the illustration purposeses I download images,
+* but this method allows you to download ANY file,
+* because in the end you receive the file as byte[] array.
+*
 */ 
 
 // these are the images we're going to download
@@ -31,6 +38,8 @@ void setup(){
                                                                                                           // and it's only 6Mb (yes, only 6 MegaBytes) as jpeg on disk.
   };
   
+  // submit urls to the download manager, 
+  // so that he starts asynchronouse download.
   for(String hugeImage : hugeImageURLs){
     so.submitDownloadJob(hugeImage);
   }
@@ -38,34 +47,32 @@ void setup(){
   
 }
 
+
+
+
 int fileCount =0;
+/**
+* This method is called when download is complete.
+* (Can complete successfully or can be a "complete" failure.
+*/
 void downloadJobComplete(DownloadJob djob){
  
    println("Completed download job(we need to check for success status) for url:\n" + djob.getUrl());
    if ( djob.isDownloadSuccess() ){
-      byte[] bbb = djob.getBytes();
-      // here we assume that the file will be the jpeg.
-      // but if you're going to be downloading other files
-      // you may want to do your checks vs URL
-      String filename= "file_" + fileCount + ".jpg"; 
-      filename = dataPath(filename);
+      byte[] bbb = djob.getBytes();  // this could be any file returned as byte[] array.
       
-      // we can't convert bytes to image directly,
-      // so first we save them to file and then we load file.
-      saveBytes(filename, bbb );
-      
-      
-      PImage img = loadImage(filename);
-      println("For image " + fileCount +  " loaded image: " + img.toString() );
-      if ( img == null || img.width == -1 || img.height == -1 ){
-         // image was invalid, we don't add it to the image arraylist
-         println("image was invalid, we don't add it to the image arraylist");
-         return;
-      }
+      // as we know that it was image originally, we 
+      // convert it to image.
+      // but if it were html or txt or obj-file you could have
+      // processed it the way you want.
+      PImage img = convertBytesToPImage(bbb, "jpg");
       
       myImages.add(img);
       fileCount++;
       
+   }
+   else{
+      println("Download wasn't successful");
    }
    println(); // empty line just for easier readability
  }
@@ -75,9 +82,9 @@ void downloadJobComplete(DownloadJob djob){
 
 void draw(){
    background(0);
-  // randomEllipse();
+
   if ( myImages.size() < 1 ){
-    text("Downloading images ...", width/2, height/2);
+      text("Downloading images ...", width/2, height/2);
   }
   else{
       int x = 0;
@@ -94,35 +101,3 @@ void draw(){
   randomEllipse();  
 }
 
-
-void drawImageWithBorderAndText(PImage img, int x, int y, String msg){
-     fill(#0000FF);
-     rect(x, y, width -x, height -y);
-     image(img, x , y);
-     stroke(255);
-     strokeWeight(3);
-     noFill();
-     rect(x, y, width -x, height -y);
-     textAlign(LEFT, TOP);
-     fill(255);
-     text(msg, x + 5, y +  5);
-  
-}
-
-void randomEllipse(){
-   fill(#FF0000);
-   noStroke();
-   float x = random(width);
-   float y = random(height);
-   ellipse( x, y ,
-         random(10,20), random(10, 20));
-   
-   String msg = "If ellipse freezes on screen, means that downloadJobComplete() " + 
-                " takes too long to complete. Most likely loadImage() or saveBytes() " +
-                " take long time because they have to operate on HUGE images (40Mp) "+ 
-                " first with saveBytes() they have to write bytes to hard disk (which takes time) " +
-                " but what's worse is that after they loadImage() which has to take a JPG and DECOMPRESS " +
-                " it into PImage and this takes a LOT of time. For example 6Mb jpeg file will take 256Mb in memory " + 
-                " so you can understand that decompression has to do significant job";        
-   text(msg, x, y, 300, 300);
-}
