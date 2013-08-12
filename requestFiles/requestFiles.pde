@@ -21,7 +21,7 @@ void setup(){
   size(800,600);
     
 
-  dm = prepareDownloadObject();
+  dm = setupDownloadManager();
   
   // prepare list of urls which we want to download.
   // you can download ANY types of files with the downloadobject
@@ -50,41 +50,57 @@ void setup(){
 
 
 
-int fileCount =0;
+
 /**
 * This method is called when download is complete.
 * (Can complete successfully or can be a "complete" failure.
 */
-void downloadJobComplete(DownloadJob djob){
- 
-   println("Completed download job(we need to check for success status) for url:\n" + djob.getUrl());
-   if ( djob.isDownloadSuccess() ){
-      byte[] bbb = djob.getBytes();  // this could be any file returned as byte[] array.
-      
-      // as we know that it was image originally, we 
-      // convert it to image.
-      // but if it were html or txt or obj-file you could have
-      // processed it the way you want.
-      PImage img = convertBytesToPImage(bbb, "jpg");
-      
-      // we need to test if the image is ok, because
-      // sometimes you may download incomplete image (eg. server drops connection or internet connection is bad)
-      // or sometimes instead of the requested image file you may get 404 error (if file was moved) or some other
-      // error. So we need to check if the conversion from bytes[] into image was ok.
-      if (  img != null ){  
-            
-            myImages.add(img);
-      }
+//void downloadJobComplete(DownloadJob djob){
+// 
+//   println("Completed download job(we need to check for success status) for url:\n" + djob.getUrl());
+//   if ( djob.isDownloadSuccess() ){
+//      byte[] bbb = djob.getBytes();  // this could be any file returned as byte[] array.
+//      
+//      // as we know that it was image originally, we 
+//      // convert it to image.
+//      // but if it were html or txt or obj-file you could have
+//      // processed it the way you want.
+//      PImage img = convertBytesToPImage(bbb, "jpg");
+//      
+//      // we need to test if the image is ok, because
+//      // sometimes you may download incomplete image (eg. server drops connection or internet connection is bad)
+//      // or sometimes instead of the requested image file you may get 404 error (if file was moved) or some other
+//      // error. So we need to check if the conversion from bytes[] into image was ok.
+//      if (  img != null ){  
+//            
+//            myImages.add(img);
+//      }
+//
+//      
+//   }
+//   else{
+//      println("Download wasn't successful");
+//   }
+//   println(); // empty line just for easier readability
+// }
 
-      
-   }
-   else{
-      println("Download wasn't successful");
-   }
-   println(); // empty line just for easier readability
- }
-
-
+///**
+//* This is simpliest and trivial version of 
+//* downloadJob complete.
+//*/
+//void downloadJobComplete(DownloadJob djob){
+//
+//   println("Completed download job for url:\n" + djob.getUrl());
+//   if ( djob.isDownloadSuccess() ){
+//      byte[] bytes = djob.getBytes();
+//      println("Status: SUCCESSFUL DOWNLOAD. Received " + bytes.length +  " bytes"); 
+//   }
+//   else{
+//      println("Status: UNSUCCESSFUL DOWNLOAD");
+//   }
+//   
+//   println();
+//}
 
 
 void draw(){

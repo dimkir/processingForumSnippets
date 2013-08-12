@@ -31,6 +31,7 @@
 *   @return on success valid instance of PImage,
 *           on error NULL and prints out error message to console.
 */
+int fileCount =0;
 PImage convertBytesToPImage(byte[] imageFileBytes, String imageExtension){
   
       // if image extension doesn't have "." in the beginning, add it.
