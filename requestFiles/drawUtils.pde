@@ -35,7 +35,7 @@ PImage convertBytesToPImage(byte[] imageFileBytes, String imageExtension){
   
       // if image extension doesn't have "." in the beginning, add it.
       if ( imageExtension.charAt(0) != '.' ){
-         imageExtension += "." + imageExtension;
+         imageExtension = "." + imageExtension;
       }    
   
       // here we assume that the file will be the jpeg.
