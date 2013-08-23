@@ -2,6 +2,8 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+// THE ORIGINAL LOCATION OF THIS CLASS SOURCE:
+//  http://support.ntp.org/pub/Support/JavaSntpClient/NtpMessage.java
 
 /**
  * This class represents a NTP message, as specified in RFC 2030.  The message

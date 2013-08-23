@@ -1,8 +1,7 @@
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.DatagramPacket;
-import java.net.SocketException;
-import java.net.UnknownHostException;
+/**
+* This sketch illustrates how to get time from ntp-server.
+* @author Dimitry Kireyenkov
+*/
 void setup() {
    String server = "0.uk.pool.ntp.org";
    //String server = "time.euro.apple.com";
