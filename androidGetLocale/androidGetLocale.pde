@@ -1,3 +1,15 @@
+/**
+* This sketch shows how Locale can be used
+* to determine current system language.
+* For more extensive version of documentation
+* re android behaviour of Locale see:
+* @see http://developer.android.com/reference/java/util/Locale.html
+
+* Note that Locale is part of standard java distribution and
+* works both in Android AND Java modes.
+* @author Dimitry Kireyenkov
+*/
+
 import java.util.Locale;
 void setup(){
      String dispLang = Locale.getDefault().getDisplayLanguage();
