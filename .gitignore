@@ -6,14 +6,18 @@
 # Processing PDE environment rubbish.
 #
 ######################
-application.linux32/
-application.linux64/
-application.macosx/
-application.windows32/
-application.windows64/
-web-export/
+**/application.linux32/
+**/application.linux64/
+**/application.macosx/
+**/application.windows32/
+**/application.windows64/
+**/web-export/
 
+#hopefully anywhere in the path
 sketch.properties
+
+#specific sketches
+requestFiles/data/*
 
 # Package Files #
 *.jar
