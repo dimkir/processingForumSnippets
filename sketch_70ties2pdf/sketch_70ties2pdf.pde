@@ -10,33 +10,33 @@ int interval = 30;
 int[] bitPositions = {0, 1, 2, 3, 4, 5, 12};
 boolean[] permutation = {true,true,true,true,true,true,false,false,false,false,false,false};
 
-void draw_cube(int slength, boolean[] permutation){
+void draw_cube(PGraphics pg, int slength, boolean[] permutation){
   int side = slength/2;
   int start_point = -side;
   if(permutation[0])
-    line(start_point, start_point, start_point, start_point, start_point, side);
+    pg.line(start_point, start_point, start_point, start_point, start_point, side);
   if(permutation[1])
-    line(start_point, start_point, start_point, start_point, side, start_point);
+    pg.line(start_point, start_point, start_point, start_point, side, start_point);
   if(permutation[2])
-    line(start_point, start_point, start_point, side, start_point, start_point);
+    pg.line(start_point, start_point, start_point, side, start_point, start_point);
   if(permutation[3])
-    line(start_point, start_point, side, start_point, side, side);
+    pg.line(start_point, start_point, side, start_point, side, side);
   if(permutation[4])
-    line(start_point, start_point, side, side, start_point, side);
+    pg.line(start_point, start_point, side, side, start_point, side);
   if(permutation[5])
-    line(start_point, side, start_point, side, side, start_point);
+    pg.line(start_point, side, start_point, side, side, start_point);
   if(permutation[6])
-    line(start_point, side, start_point, start_point, side, side);
+    pg.line(start_point, side, start_point, start_point, side, side);
   if(permutation[7])
-    line(side, start_point, start_point, side, side, start_point);
+    pg.line(side, start_point, start_point, side, side, start_point);
   if(permutation[8])
-    line(side, start_point, start_point, side, start_point, side);
+    pg.line(side, start_point, start_point, side, start_point, side);
   if(permutation[9])  
-    line(side, side, start_point, side, side, side);
+    pg.line(side, side, start_point, side, side, side);
   if(permutation[10])
-    line(side, start_point, side, side, side, side);
+    pg.line(side, start_point, side, side, side, side);
   if(permutation[11])
-    line(start_point, side, side, side, side, side);
+    pg.line(start_point, side, side, side, side, side);
 }
 
 boolean[] swap_boolean_array(boolean[] boolArr, int indexFrom, int indexTo){
@@ -63,7 +63,8 @@ boolean nextPermutation(){
 }
 
 void setup(){
-    size(990, 990, P3D);
+    size(990, 990);
+    beginRaw(PDF, "something.pdf");
     ortho();
     background(0);
     noFill();
@@ -89,7 +90,7 @@ void setup(){
           pushMatrix();
           rotateX(PI * 5/6);
           rotateY(PI * -5/6);
-          draw_cube(15, permutation);
+          draw_cube(g, 15, permutation);
           anyPermsLeft = nextPermutation();
           popMatrix();
       }
