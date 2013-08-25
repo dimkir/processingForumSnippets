@@ -34,8 +34,10 @@ PImage img;
 void setup(){
    size(800,600);
    
+   // getting proxy settings as described in 
+   // @see http://docs.oracle.com/javase/6/docs/technotes/guides/net/proxies.html
    String proxyHost = System.getProperty("http.proxyHost");
-   String proxyPort = System.getProperty("http.proxyHost");
+   String proxyPort = System.getProperty("http.proxyPort");
    print("http.ProxyHost: ");
    println(proxyHost);
    
