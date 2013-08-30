@@ -1,4 +1,10 @@
-
+/**
+*
+*
+* Free graphics used for the sketch are 
+* taken from
+* http://www.lostgarden.com/2007/05/dancs-miraculously-flexible-game.html
+*/
 // http://forum.processing.org/topic/problem-with-pimage-resize
 
 final static int IMGS = 3;
